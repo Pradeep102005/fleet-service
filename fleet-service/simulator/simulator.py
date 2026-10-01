@@ -14,8 +14,9 @@ except ImportError:
 # Constants
 NUM_VEHICLES = 1000  # Default scale for local execution (can scale to 100,000)
 KAFKA_BROKER = "localhost:9092"
-TOPIC = "telemetry.raw"
-REST_ENDPOINT = "http://localhost:8080/api/v1/telemetry/ingest"
+import os
+
+REST_ENDPOINT = os.environ.get("BACKEND_URL", "http://localhost:8080") + "/api/v1/telemetry/ingest"
 
 # Generate deterministic VINs for fleet
 VEHICLES = [f"1HGCM82633A{str(i).zfill(6)}" for i in range(NUM_VEHICLES)]

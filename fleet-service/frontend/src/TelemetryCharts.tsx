@@ -148,7 +148,8 @@ const TelemetryCharts: React.FC<TelemetryChartsProps> = ({ vin }) => {
 
   useEffect(() => {
     const fetchHistory = () => {
-      fetch(`/api/v1/vehicles/${vin}/telemetry/history`)
+      const baseUrl = import.meta.env.VITE_API_URL || '';
+      fetch(`${baseUrl}/api/v1/vehicles/${vin}/telemetry/history`)
         .then(res => res.json())
         .then(data => {
           if (Array.isArray(data)) {

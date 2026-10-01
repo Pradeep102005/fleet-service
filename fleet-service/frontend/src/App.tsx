@@ -48,7 +48,8 @@ function App() {
 
   useEffect(() => {
     const fetchData = () => {
-      fetch('/api/v1/vehicles/health/bulk?limit=1000')
+      const baseUrl = import.meta.env.VITE_API_URL || '';
+      fetch(`${baseUrl}/api/v1/vehicles/health/bulk?limit=1000`)
         .then(res => res.json())
         .then(data => {
             if (Array.isArray(data)) {

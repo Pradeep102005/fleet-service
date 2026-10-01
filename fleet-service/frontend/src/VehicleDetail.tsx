@@ -34,14 +34,15 @@ const VehicleDetail: React.FC<VehicleDetailProps> = ({ vin, onClose }) => {
 
   useEffect(() => {
     const fetchDetail = () => {
-      fetch(`/api/v1/vehicles/${vin}/health`)
+      const baseUrl = import.meta.env.VITE_API_URL || '';
+      fetch(`${baseUrl}/api/v1/vehicles/${vin}/health`)
         .then(res => res.json())
         .then(data => {
             setHealthData(data);
         }).catch(console.error);
 
         
-      fetch(`/api/v1/alerts?status=open&size=10`)
+      fetch(`${baseUrl}/api/v1/alerts?status=open&size=10`)
         .then(res => res.json())
         .then(data => {
             const vehicleAlerts = (data.content || []).filter((a: any) => a.vehicleVin === vin || a.vehicle?.vin === vin);
