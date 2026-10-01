@@ -265,13 +265,37 @@ async def run_http_simulator():
             pass
         print("HTTP Simulator stopped.")
 
+def start_dummy_health_server():
+    import os
+    from http.server import HTTPServer, BaseHTTPRequestHandler
+    import threading
+
+    port = int(os.environ.get("PORT", 10000))
+
+    class HealthHandler(BaseHTTPRequestHandler):
+        def do_GET(self):
+            self.send_response(200)
+            self.send_header("Content-type", "text/plain")
+            self.end_headers()
+            self.wfile.write(b"Simulator Healthy")
+        def log_message(self, format, *args):
+            return
+
+    server = HTTPServer(("0.0.0.0", port), HealthHandler)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    print(f"Health check HTTP server listening on port {port}")
+
 if __name__ == "__main__":
     import sys
     mode = sys.argv[1] if len(sys.argv) > 1 else "http"
     
+    start_dummy_health_server()
+
     if mode == "kafka":
         asyncio.run(run_kafka_simulator())
     elif mode == "http":
         asyncio.run(run_http_simulator())
     else:
         print("Usage: python simulator.py [kafka|http]")
+
