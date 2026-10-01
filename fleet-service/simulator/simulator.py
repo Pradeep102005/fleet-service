@@ -4,7 +4,12 @@ import random
 import time
 from datetime import datetime, timezone
 import aiohttp
-from confluent_kafka import Producer
+try:
+    from confluent_kafka import Producer
+    KAFKA_AVAILABLE = True
+except ImportError:
+    Producer = None
+    KAFKA_AVAILABLE = False
 
 # Constants
 NUM_VEHICLES = 1000  # Default scale for local execution (can scale to 100,000)
