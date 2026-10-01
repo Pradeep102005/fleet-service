@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Area, AreaChart,
-  CartesianGrid
+  Tooltip, ResponsiveContainer, Area, AreaChart
 } from 'recharts';
 import { Activity, Battery, Thermometer, Gauge } from 'lucide-react';
 
@@ -20,10 +19,22 @@ interface TelemetryChartsProps {
   vin: string;
 }
 
-const miniChartConfig = {
+interface ChartConfigItem {
+  label: string;
+  key: keyof TelemetryPoint;
+  color: string;
+  gradientId: string;
+  icon: React.ReactNode;
+  unit: string;
+  dangerThreshold?: number;
+  warningThreshold?: number;
+  invertDanger?: boolean;
+}
+
+const miniChartConfig: Record<string, ChartConfigItem> = {
   engineTemp: {
     label: 'Engine Temp',
-    key: 'engineTemperature' as keyof TelemetryPoint,
+    key: 'engineTemperature',
     color: '#f59e0b',
     gradientId: 'gradEngine',
     icon: <Thermometer className="w-3.5 h-3.5 text-amber-400" />,
@@ -33,7 +44,7 @@ const miniChartConfig = {
   },
   voltage: {
     label: 'Battery Voltage',
-    key: 'voltage' as keyof TelemetryPoint,
+    key: 'voltage',
     color: '#3b82f6',
     gradientId: 'gradVoltage',
     icon: <Battery className="w-3.5 h-3.5 text-blue-400" />,
@@ -44,15 +55,17 @@ const miniChartConfig = {
   },
   speed: {
     label: 'Speed',
-    key: 'speed' as keyof TelemetryPoint,
+    key: 'speed',
     color: '#a855f7',
     gradientId: 'gradSpeed',
     icon: <Gauge className="w-3.5 h-3.5 text-purple-400" />,
     unit: 'km/h',
+    dangerThreshold: 120,
+    warningThreshold: 100,
   },
   coolantTemp: {
     label: 'Coolant Temp',
-    key: 'coolantTemperature' as keyof TelemetryPoint,
+    key: 'coolantTemperature',
     color: '#06b6d4',
     gradientId: 'gradCoolant',
     icon: <Activity className="w-3.5 h-3.5 text-cyan-400" />,
@@ -78,7 +91,7 @@ const CustomTooltip = ({ active, payload, unit }: any) => {
 
 const MiniChart: React.FC<{
   data: any[];
-  config: typeof miniChartConfig.engineTemp;
+  config: ChartConfigItem;
 }> = ({ data, config }) => {
   const values = data.map(d => d[config.key]).filter(v => v != null) as number[];
   const latestValue = values.length > 0 ? values[values.length - 1] : 0;
